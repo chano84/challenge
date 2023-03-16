@@ -1,6 +1,5 @@
 package com.tenpo.challenge.controller;
 
-
 import com.tenpo.challenge.controller.dto.RequestCalculateDTO;
 import com.tenpo.challenge.controller.dto.ResultCalculateDTO;
 import com.tenpo.challenge.services.CalculateService;

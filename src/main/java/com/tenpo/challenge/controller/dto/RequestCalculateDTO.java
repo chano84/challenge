@@ -2,9 +2,9 @@ package com.tenpo.challenge.controller.dto;
 
 public class RequestCalculateDTO {
 
-    Long valueA;
+    private Long valueA;
 
-    Long valueB;
+    private Long valueB;
 
     public Long getValueA() {
         return valueA;

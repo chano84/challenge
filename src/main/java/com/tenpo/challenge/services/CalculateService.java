@@ -10,12 +10,17 @@ public class CalculateService {
 
     private final CalculateRequestRepository calculateRequestRepository;
 
-    public CalculateService(CalculateRequestRepository calculateRequestRepository) {
+    private final PercentageService percentageService;
+
+    public CalculateService(CalculateRequestRepository calculateRequestRepository, PercentageService percentageService) {
         this.calculateRequestRepository = calculateRequestRepository;
+        this.percentageService = percentageService;
     }
 
     public BigDecimal calculate(Long valueA, Long valueB ){
-        return null;
+        Long percentage = this.percentageService.getPercentage();
+        Long result = valueA * valueB * percentage;
+        return BigDecimal.valueOf(result);
     }
 
 }
