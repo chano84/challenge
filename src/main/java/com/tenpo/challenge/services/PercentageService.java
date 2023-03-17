@@ -21,7 +21,6 @@ public class PercentageService {
     }
 
     /**
-     * TODO:
      * Si esta en redis, retorno redis sino voy al servicio, si el servicio faya retorno el ultimo valor utilizable
      * @return Long
      */
@@ -38,18 +37,15 @@ public class PercentageService {
      * @return Long
      */
     private Long getValue(){
-        if ( this.redisTemplate.opsForValue().get(NUMBER_KEY) == null ) {
-            Long value = this.percentageClient.getPercentage();
+        Long value = this.redisTemplate.opsForValue().get(NUMBER_KEY);
+        if ( value == null ) {
+            value = this.percentageClient.getPercentage();
             if ( value != null ){
                 this.redisTemplate.opsForValue().set(NUMBER_KEY,value);
                 this.redisTemplate.opsForValue().set(LAST_NUMBER_KEY,value);
-                return value;
-            }else {
-                return this.getLastValue();
             }
-        }else{
-            return this.redisTemplate.opsForValue().get(NUMBER_KEY);
         }
+        return value;
     }
 
     /**
@@ -59,7 +55,7 @@ public class PercentageService {
     private Long getLastValue(){
         Long value =  this.redisTemplate.opsForValue().get(LAST_NUMBER_KEY);
         if ( value == null ){
-            throw new RuntimeException("No existe value");
+            throw new RuntimeException("The value doesn't exist");
         }
         return value;
     }
