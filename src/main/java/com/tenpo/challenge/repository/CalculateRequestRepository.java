@@ -1,13 +1,10 @@
 package com.tenpo.challenge.repository;
 
 import com.tenpo.challenge.model.CalculateRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class CalculateRequestRepository {
-
-    public CalculateRequest save(CalculateRequest calculateRequest){
-        return calculateRequest;
-    }
+public interface CalculateRequestRepository extends JpaRepository<CalculateRequest, Long> {
 
 }

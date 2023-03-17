@@ -4,9 +4,9 @@ import java.util.List;
 
 public class CalculateRequestPaginated {
 
-    List<CalculateRequest> list;
     Integer page;
     Integer offset;
     Integer current;
+    List<CalculateRequest> list;
 
 }
