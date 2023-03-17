@@ -13,7 +13,7 @@ public class PercentageService {
 
     private static final String LAST_NUMBER_KEY = "lastNumber";
 
-    private static final String NUMBER_KEY = "number";
+    private static final String NUMBER_KEY = "numbero";
 
     public PercentageService(PercentageClient percentageClient, RedisTemplate<String, Long> redisTemplate) {
         this.percentageClient = percentageClient;
@@ -39,7 +39,7 @@ public class PercentageService {
     private Long getValue(){
         Long value = this.redisTemplate.opsForValue().get(NUMBER_KEY);
         if ( value == null ) {
-            value = this.percentageClient.getPercentage();
+            value = this.percentageClient.getPercentage().getValue();
             if ( value != null ){
                 this.redisTemplate.opsForValue().set(NUMBER_KEY,value);
                 this.redisTemplate.opsForValue().set(LAST_NUMBER_KEY,value);

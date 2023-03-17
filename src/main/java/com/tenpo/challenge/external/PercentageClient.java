@@ -1,5 +1,6 @@
 package com.tenpo.challenge.external;
 
+import com.tenpo.challenge.external.dto.PercentageDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -12,17 +13,19 @@ public class PercentageClient {
 
     private final WebClient webClient;
 
-    public PercentageClient(@Value("${tenpo.percentage.url}") String url, WebClient webClient) {
-        this.url = url;
-        this.webClient = webClient;
+    public PercentageClient(@Value("${tenpo.percentage.url}") String url) {
+         this.url = url;
+        this.webClient =  WebClient.builder()
+                .baseUrl(url)
+                .build();
     }
 
-    public Long getPercentage() {
+    public PercentageDTO getPercentage() {
         return webClient.get()
-                .uri(this.url)
+                .uri("")
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
-                .bodyToMono(Long.class)
+                .bodyToMono(PercentageDTO.class)
                 .block();
     }
 
