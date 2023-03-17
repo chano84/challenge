@@ -11,15 +11,15 @@ import java.time.Duration;
 @Configuration
 public class ResilenceConfig {
 
-
     @Bean
     public RateLimiterRegistry rateLimiterRegistry() {
         RateLimiterConfig config = RateLimiterConfig.custom()
-                .limitForPeriod(10) // Límite de 10 solicitudes por segundo
+                .limitForPeriod(1) // Límite de 10 solicitudes por segundo
                 .limitRefreshPeriod(Duration.ofSeconds(1)) // Ventana de tiempo de 1 segundo
                 .timeoutDuration(Duration.ofMillis(100)) // Timeout máximo de 100 ms para adquirir un permiso
                 .build();
         RateLimiterRegistry rateLimiterRegistry = RateLimiterRegistry.of(config);
+        return rateLimiterRegistry;
     }
 
     @Bean
