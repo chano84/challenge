@@ -40,11 +40,15 @@ public class PercentageService {
     private Long getValue(){
         if ( this.redisTemplate.opsForValue().get(NUMBER_KEY) == null ) {
             Long value = this.percentageClient.getPercentage();
-            this.redisTemplate.opsForValue().set(NUMBER_KEY,value);
-            this.redisTemplate.opsForValue().set(LAST_NUMBER_KEY,value);
-            return value;
+            if ( value != null ){
+                this.redisTemplate.opsForValue().set(NUMBER_KEY,value);
+                this.redisTemplate.opsForValue().set(LAST_NUMBER_KEY,value);
+                return value;
+            }else {
+                return this.getLastValue();
+            }
         }else{
-            return this.getLastValue();
+            return this.redisTemplate.opsForValue().get(NUMBER_KEY);
         }
     }
 

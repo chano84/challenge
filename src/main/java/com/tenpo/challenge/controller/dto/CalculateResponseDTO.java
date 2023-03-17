@@ -2,11 +2,11 @@ package com.tenpo.challenge.controller.dto;
 
 import java.math.BigDecimal;
 
-public class ResponseCalculateDTO {
+public class CalculateResponseDTO {
 
     private BigDecimal value;
 
-    public ResponseCalculateDTO(BigDecimal value){
+    public CalculateResponseDTO(BigDecimal value){
         this.value = value;
     }
 

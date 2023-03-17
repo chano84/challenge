@@ -1,7 +1,7 @@
 package com.tenpo.challenge.controller;
 
-import com.tenpo.challenge.controller.dto.RequestCalculateDTO;
-import com.tenpo.challenge.controller.dto.ResponseCalculateDTO;
+import com.tenpo.challenge.controller.dto.CalculateRequestDTO;
+import com.tenpo.challenge.controller.dto.CalculateResponseDTO;
 import com.tenpo.challenge.services.CalculateService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +21,9 @@ public class CalculateController {
     }
 
     @PostMapping
-    public ResponseCalculateDTO calculate(@RequestBody RequestCalculateDTO requestCalculateDTO){
+    public CalculateResponseDTO calculate(@RequestBody CalculateRequestDTO requestCalculateDTO){
         BigDecimal result = this.calculateService.calculate(requestCalculateDTO.getValueA(), requestCalculateDTO.getValueB());
-        return new ResponseCalculateDTO(result);
+        return new CalculateResponseDTO(result);
     }
 
 }
