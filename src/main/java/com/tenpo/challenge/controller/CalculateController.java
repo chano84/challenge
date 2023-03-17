@@ -20,7 +20,6 @@ public class CalculateController {
 
     private final CalculateService calculateService;
 
-
     public CalculateController(CalculateService calculateService) {
         this.calculateService = calculateService;
     }
