@@ -22,7 +22,7 @@ public class CalculateRequestController {
     }
 
     @GetMapping
-    public Page<CalculateRequest> getUsers(@RequestParam(defaultValue = "0") int page,
+    public Page<CalculateRequest> findAll(@RequestParam(defaultValue = "0") int page,
                                            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<CalculateRequest> pages = this.calculateRequestService.findAll(pageable);
