@@ -1,13 +1,13 @@
 package com.tenpo.challenge.services;
 
 import com.tenpo.challenge.model.CalculateRequest;
-import com.tenpo.challenge.model.CalculateRequestPaginated;
 import com.tenpo.challenge.repository.CalculateRequestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-
 
 @Service
 public class CalculateRequestService {
@@ -29,8 +29,8 @@ public class CalculateRequestService {
      * Realizar las consultas paginadas
      * @return
      */
-    public CalculateRequestPaginated findPaginated(){
-        return new CalculateRequestPaginated();
+    public Page<CalculateRequest> findAll(Pageable pageable){
+        return calculateRequestRepository.findAll(pageable);
     }
 
 

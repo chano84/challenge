@@ -24,6 +24,8 @@ public class CalculateRequest {
     @Column(name = "date")
     private LocalDateTime date;
 
+    public CalculateRequest(){}
+
     public CalculateRequest(Long valueA, Long valueB, Long result, LocalDateTime date) {
         this.valueA = valueA;
         this.valueB = valueB;
