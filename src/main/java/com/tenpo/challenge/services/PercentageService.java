@@ -11,9 +11,9 @@ public class PercentageService {
 
     private final RedisTemplate<String,Long> redisTemplate;
 
-    private static final String LAST_NUMBER_KEY = "lastNumber";
+    private static final String LAST_NUMBER_KEY = "last_number";
 
-    private static final String NUMBER_KEY = "numbero";
+    private static final String NUMBER_KEY = "number";
 
     public PercentageService(PercentageClient percentageClient, RedisTemplate<String, Long> redisTemplate) {
         this.percentageClient = percentageClient;

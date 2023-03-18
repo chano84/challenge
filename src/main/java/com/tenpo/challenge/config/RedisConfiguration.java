@@ -30,6 +30,9 @@ public class RedisConfiguration {
         @Value("${spring.data.redis.key.ttl}")
         private Long key;
 
+        @Value("${redis.keyspace:percent}")
+        private String keyspace;
+
         @Override
         public boolean hasSettingsFor(Class<?> type) {
             return true;
@@ -37,14 +40,13 @@ public class RedisConfiguration {
 
         @Override
         public KeyspaceSettings getKeyspaceSettings(Class<?> type) {
-            if (type.getSimpleName().equals("percent")) {
-                KeyspaceSettings keyspaceSettings = new KeyspaceSettings(type, "percent");
+            if (type.getSimpleName().equals(this.keyspace)) {
+                KeyspaceSettings keyspaceSettings = new KeyspaceSettings(type, this.keyspace);
                 keyspaceSettings.setTimeToLive(key);
                 return keyspaceSettings;
             }
             return new KeyspaceSettings(type, type.getSimpleName());
         }
-
     }
 
 }

@@ -1,6 +1,6 @@
 package com.tenpo.challenge.controller.dto;
 
-public class CalculateRequestDTO {
+public class CalculateDTO {
 
     private Long valueA;
 

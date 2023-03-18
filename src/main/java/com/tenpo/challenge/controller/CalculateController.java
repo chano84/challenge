@@ -1,7 +1,7 @@
 package com.tenpo.challenge.controller;
 
-import com.tenpo.challenge.controller.dto.CalculateRequestDTO;
-import com.tenpo.challenge.controller.dto.CalculateResponseDTO;
+import com.tenpo.challenge.controller.dto.CalculateDTO;
+import com.tenpo.challenge.controller.dto.CalculateResultDTO;
 import com.tenpo.challenge.services.CalculateService;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -26,9 +26,9 @@ public class CalculateController {
 
     @PostMapping
     @RateLimiter(name = "calculate", fallbackMethod = "calculateFallback")
-    public ResponseEntity<CalculateResponseDTO> calculate(@RequestBody CalculateRequestDTO requestCalculateDTO) {
+    public ResponseEntity<CalculateResultDTO> calculate(@RequestBody CalculateDTO requestCalculateDTO) {
          BigDecimal result = this.calculateService.calculate(requestCalculateDTO.getValueA(), requestCalculateDTO.getValueB());
-         return new ResponseEntity<>(new CalculateResponseDTO(result),HttpStatus.OK);
+         return new ResponseEntity<>(new CalculateResultDTO(result),HttpStatus.OK);
     }
 
     public ResponseEntity<String> calculateFallback(Throwable ex) {
