@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Optional;
 
 @Component
 public class RedisClient {
@@ -28,16 +29,16 @@ public class RedisClient {
         this.redisTemplate.expire(NUMBER_KEY, this.duration);
     }
 
-    public Long getNumber(){
-        return this.redisTemplate.opsForValue().get(NUMBER_KEY);
+    public Optional<Long> getNumber(){
+        return Optional.ofNullable(this.redisTemplate.opsForValue().get(NUMBER_KEY));
     }
 
     public void setLastNumber(Long value){
         this.redisTemplate.opsForValue().set(LAST_NUMBER_KEY, value);
     }
 
-    public Long getLastNumber(){
-        return this.redisTemplate.opsForValue().get(LAST_NUMBER_KEY);
+    public Optional<Long> getLastNumber(){
+        return Optional.ofNullable(this.redisTemplate.opsForValue().get(LAST_NUMBER_KEY));
     }
 
 }

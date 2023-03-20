@@ -1,8 +1,11 @@
 package com.tenpo.challenge.services;
 
+import com.tenpo.challenge.exceptions.BusinessException;
 import com.tenpo.challenge.external.PercentageClient;
 import com.tenpo.challenge.redis.RedisClient;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class PercentageService {
@@ -21,31 +24,32 @@ public class PercentageService {
      * @return Long
      */
     public Long getPercentage(){
-        Long value = this.getValue();
-        if ( value == null){
-            value = this.getLastValue();
-        }
-        return value;
+        return this.getValue().orElse(this.getLastValue());
     }
 
     /**
      * Busca en cache o servicio externo
      * @return Long
      */
-    private Long getValue(){
-        Long value = this.redisClient.getNumber();
-        if ( value == null ) {
-            try {
-                value = this.percentageClient.getPercentage().getValue();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if ( value != null ){
-                this.redisClient.setNumber(value);
-                this.redisClient.setLastNumber(value);
-            }
+    private Optional<Long> getValue(){
+        Long value = this.redisClient.getNumber().orElse(this.getValueOfClient());
+        return Optional.ofNullable(value);
+    }
+
+    /**
+     *
+     * @return
+     */
+    private Long getValueOfClient() {
+        try {
+            Long value = this.percentageClient.getPercentage().getValue();
+            this.redisClient.setNumber(value);
+            this.redisClient.setLastNumber(value);
+            return value;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        return value;
     }
 
     /**
@@ -53,11 +57,8 @@ public class PercentageService {
      * @return Long
      */
     private Long getLastValue(){
-        Long value =  this.redisClient.getLastNumber();
-        if ( value == null ){
-            throw new RuntimeException("The value doesn't exist");
-        }
-        return value;
+        return this.redisClient.getLastNumber()
+                .orElseThrow( () -> new BusinessException("The value doesn't exist"));
     }
 
 }
