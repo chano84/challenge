@@ -38,17 +38,18 @@ public class PercentageService {
 
     /**
      *
-     * @return
+     * @return get Value of client if doesnt exist return null
      */
     private Long getValueOfClient() {
+        Long value = null;
         try {
-            Long value = this.percentageClient.getPercentage().getValue();
+            value = this.percentageClient.getPercentage().getValue();
             this.redisClient.setNumber(value);
             this.redisClient.setLastNumber(value);
             return value;
-        } catch (Exception e) {
+        } catch (BusinessException e) {
             e.printStackTrace();
-            return null;
+            return value;
         }
     }
 
@@ -58,7 +59,7 @@ public class PercentageService {
      */
     private Long getLastValue(){
         return this.redisClient.getLastNumber()
-                .orElseThrow( () -> new BusinessException("The value doesn't exist"));
+                .orElseThrow( () -> new BusinessException("The Last Value doesn't exist"));
     }
 
 }
