@@ -1,6 +1,7 @@
 package com.tenpo.challenge.controller;
 
 import com.tenpo.challenge.exceptions.BusinessException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,7 +13,6 @@ import static org.springframework.http.ResponseEntity.status;
 @ControllerAdvice
 public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
-
     /**
      * Handler for a request with invalid data exception.
      *
@@ -22,13 +22,20 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> invalidRequestHandler(IllegalArgumentException ex) {
         return status(HttpStatus.BAD_REQUEST)
-                .body( ex.getMessage());
+                .body("Invalid Request");
     }
+
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> businessExceptionHandler(BusinessException ex) {
         return status(HttpStatus.BAD_REQUEST)
                 .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(RequestNotPermitted.class)
+    public ResponseEntity<Object> requestExceptionHandler(RequestNotPermitted ex) {
+        return status(HttpStatus.TOO_MANY_REQUESTS)
+                .body("To many request");
     }
 
     /**

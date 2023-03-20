@@ -72,4 +72,14 @@ public class CalculateRequest {
     public void setDate(LocalDateTime date) {
         this.date = date;
     }
+
+    @Override
+    public String toString() {
+        return "CalculateRequest{" +
+                "valueA=" + valueA +
+                ", valueB=" + valueB +
+                ", result=" + result +
+                ", date=" + date +
+                '}';
+    }
 }

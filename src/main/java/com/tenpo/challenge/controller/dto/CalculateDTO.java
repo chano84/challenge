@@ -1,24 +1,10 @@
 package com.tenpo.challenge.controller.dto;
 
-public class CalculateDTO {
+import javax.validation.constraints.NotNull;
 
-    private Long valueA;
-
-    private Long valueB;
-
-    public Long getValueA() {
-        return valueA;
-    }
-
-    public void setValueA(Long valueA) {
-        this.valueA = valueA;
-    }
-
-    public Long getValueB() {
-        return valueB;
-    }
-
-    public void setValueB(Long valueB) {
-        this.valueB = valueB;
-    }
-}
+public record CalculateDTO (
+    @NotNull(message = "valueA cannot be not null")
+    Long valueA,
+    @NotNull(message = "valueB cannot be not null")
+    Long valueB
+){}
