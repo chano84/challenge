@@ -1,7 +1,7 @@
 package com.tenpo.challenge.services;
 
 import com.tenpo.challenge.external.PercentageClient;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.tenpo.challenge.redis.RedisClient;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -9,15 +9,11 @@ public class PercentageService {
 
     private final PercentageClient percentageClient;
 
-    private final RedisTemplate<String,Long> redisTemplate;
+    private final RedisClient redisClient;
 
-    private static final String LAST_NUMBER_KEY = "last_number";
-
-    private static final String NUMBER_KEY = "number";
-
-    public PercentageService(PercentageClient percentageClient, RedisTemplate<String, Long> redisTemplate) {
+    public PercentageService(PercentageClient percentageClient, RedisClient redisClient) {
         this.percentageClient = percentageClient;
-        this.redisTemplate = redisTemplate;
+        this.redisClient = redisClient;
     }
 
     /**
@@ -37,7 +33,7 @@ public class PercentageService {
      * @return Long
      */
     private Long getValue(){
-        Long value = this.redisTemplate.opsForValue().get(NUMBER_KEY);
+        Long value = this.redisClient.getNumber();
         if ( value == null ) {
             try {
                 value = this.percentageClient.getPercentage().getValue();
@@ -45,8 +41,8 @@ public class PercentageService {
                 e.printStackTrace();
             }
             if ( value != null ){
-                this.redisTemplate.opsForValue().set(NUMBER_KEY,value);
-                this.redisTemplate.opsForValue().set(LAST_NUMBER_KEY,value);
+                this.redisClient.setNumber(value);
+                this.redisClient.setLastNumber(value);
             }
         }
         return value;
@@ -57,7 +53,7 @@ public class PercentageService {
      * @return Long
      */
     private Long getLastValue(){
-        Long value =  this.redisTemplate.opsForValue().get(LAST_NUMBER_KEY);
+        Long value =  this.redisClient.getLastNumber();
         if ( value == null ){
             throw new RuntimeException("The value doesn't exist");
         }
