@@ -46,7 +46,7 @@ public class CalculateControllerTest {
     @Mock
     private PercentageClient percentageClient;
 
-    @Mock
+    @Autowired
     private CalculateRequestService calculateRequestService;
 
     @Autowired
@@ -78,28 +78,28 @@ public class CalculateControllerTest {
     @Test
     public void calculateWithValueInPercentageClient() throws Exception {
         when(redisClient.getNumber()).thenReturn(Optional.empty());
-        when(percentageClient.getPercentage()).thenReturn(new PercentageDTO(2L));
+        when(percentageClient.getPercentage()).thenReturn(new PercentageDTO(4L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
                         .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
         final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
+        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(12));
     }
 
     @Test
     public void calculateWithLastValue() throws Exception {
         when(redisClient.getNumber()).thenReturn(Optional.empty());
         when(percentageClient.getPercentage()).thenThrow(new BusinessException("error"));
-        when(redisClient.getLastNumber()).thenReturn(Optional.of(2L));
+        when(redisClient.getLastNumber()).thenReturn(Optional.of(11L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
                         .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
         final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
+        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(33));
     }
 
 }
