@@ -4,6 +4,12 @@ public class PercentageDTO {
 
     private Long value;
 
+    public PercentageDTO(){}
+
+    public PercentageDTO(Long value){
+        this.value = value;
+    }
+
     public Long getValue() {
         return value;
     }
