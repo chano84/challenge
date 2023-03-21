@@ -21,16 +21,21 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 public class CalculateControllerTest {
 
@@ -76,7 +81,7 @@ public class CalculateControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                         .andReturn();
         final CalculateResultDTO calculateResultDTO = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<CalculateResultDTO>() {});
-        Assertions.assertEquals(calculateResultDTO , 1);
+        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
     }
 
     public static String asJsonString(final Object obj) {

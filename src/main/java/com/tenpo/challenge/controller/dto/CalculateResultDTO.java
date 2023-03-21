@@ -10,6 +10,8 @@ public class CalculateResultDTO {
         this.value = value;
     }
 
+    public CalculateResultDTO(){}
+
     public BigDecimal getValue() {
         return value;
     }
