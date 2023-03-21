@@ -25,9 +25,8 @@ public class CalculateRequestService {
     public CalculateRequest create(Long valueA, Long valueB, Long result){
         CalculateRequest calculateRequest = new CalculateRequest(valueA,valueB,result, LocalDateTime.now());
         logger.info("CalculateRequestService.create() params: ".concat(calculateRequest.toString()));
-        this.calculateRequestRepository.save(calculateRequest);
-        return calculateRequest;
-    }
+        return this.calculateRequestRepository.save(calculateRequest);
+     }
 
     /**
      * Realizar las consultas paginadas

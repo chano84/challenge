@@ -4,16 +4,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tenpo.challenge.controller.dto.CalculateDTO;
 import com.tenpo.challenge.controller.dto.CalculateResultDTO;
-
-import com.tenpo.challenge.exceptions.BusinessException;
+import com.tenpo.challenge.controller.dto.PageDTO;
 import com.tenpo.challenge.external.PercentageClient;
-import com.tenpo.challenge.external.dto.PercentageDTO;
+import com.tenpo.challenge.model.CalculateRequest;
 import com.tenpo.challenge.redis.RedisClient;
-
 import com.tenpo.challenge.services.CalculateRequestService;
 import com.tenpo.challenge.services.CalculateService;
 import com.tenpo.challenge.services.PercentageService;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -34,13 +31,14 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 @ExtendWith(MockitoExtension.class)
-public class CalculateControllerTest {
+public class CalculateRequestControllerTest {
 
     @Mock
     private RedisClient redisClient;
@@ -55,6 +53,9 @@ public class CalculateControllerTest {
     protected MockMvc mockMvc;
 
     @Autowired
+    protected MockMvc mockMvcRequest;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @BeforeEach
@@ -62,46 +63,29 @@ public class CalculateControllerTest {
         PercentageService percentageService = new PercentageService(percentageClient,redisClient);
         CalculateService calculateService = new CalculateService(calculateRequestService,percentageService);
         CalculateController calculateController = new CalculateController(calculateService);
+        CalculateRequestController calculateRequestController = new CalculateRequestController(calculateRequestService);
         mockMvc = MockMvcBuilders.standaloneSetup(calculateController).build();
+        mockMvcRequest = MockMvcBuilders.standaloneSetup(calculateRequestController).build();
     }
 
     @Test
     public void calculateWithValueInRedis() throws Exception {
         when(redisClient.getNumber()).thenReturn(Optional.of(2L));
-        final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                        .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
-    }
-
-    @Test
-    public void calculateWithValueInPercentageClient() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.empty());
-        when(percentageClient.getPercentage()).thenReturn(new PercentageDTO(4L));
-        final MvcResult result = this.mockMvc.perform(post("/calculate")
+        this.mockMvc.perform(post("/calculate")
                         .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(12));
-    }
 
-    @Test
-    public void calculateWithLastValue() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.empty());
-        when(percentageClient.getPercentage()).thenThrow(new BusinessException("error"));
-        when(redisClient.getLastNumber()).thenReturn(Optional.of(11L));
-        final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+        final MvcResult resultRequest = this.mockMvcRequest.perform(get("/calculate-request")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(33));
-    }
 
+        final PageDTO calculateResultDTO = this.objectMapper.readValue(resultRequest.getResponse().getContentAsString(), new TypeReference<>() {});
+        Assertions.assertEquals(calculateResultDTO.getNumber() , 0);
+        Assertions.assertEquals(calculateResultDTO.getNumberOfElements() , 1);
+        Assertions.assertEquals(calculateResultDTO.getTotalPages() , 1);
+
+    }
 }
