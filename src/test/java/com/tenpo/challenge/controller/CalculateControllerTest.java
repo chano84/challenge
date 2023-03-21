@@ -55,70 +55,51 @@ public class CalculateControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private PercentageService percentageService;
-
-    private CalculateService calculateService;
-
     @BeforeEach
     public void setUp() {
-        percentageService = new PercentageService(percentageClient,redisClient);
-        calculateService = new CalculateService(calculateRequestService,percentageService);
+        PercentageService percentageService = new PercentageService(percentageClient,redisClient);
+        CalculateService calculateService = new CalculateService(calculateRequestService,percentageService);
         CalculateController calculateController = new CalculateController(calculateService);
         mockMvc = MockMvcBuilders.standaloneSetup(calculateController).build();
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
     public void calculateWithValueInRedis() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.ofNullable(Long.valueOf(2)));
+        when(redisClient.getNumber()).thenReturn(Optional.of(2L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(Long.valueOf(1), Long.valueOf(3))))
+                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                         .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<CalculateResultDTO>() {});
+        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
         Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
     }
 
-
-    /**
-     *
-     * @throws Exception
-     */
     @Test
     public void calculateWithValueInPercentageClient() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.ofNullable(null));
-        when(percentageClient.getPercentage()).thenReturn(new PercentageDTO(Long.valueOf(2)));
+        when(redisClient.getNumber()).thenReturn(Optional.empty());
+        when(percentageClient.getPercentage()).thenReturn(new PercentageDTO(2L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(Long.valueOf(1), Long.valueOf(3))))
+                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<CalculateResultDTO>() {});
+        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
         Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
     }
 
-
-    /**
-     *
-     * @throws Exception
-     */
     @Test
     public void calculateWithLastValue() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.ofNullable(null));
+        when(redisClient.getNumber()).thenReturn(Optional.empty());
         when(percentageClient.getPercentage()).thenThrow(new BusinessException("error"));
-        when(redisClient.getLastNumber()).thenReturn(Optional.ofNullable(Long.valueOf(2)));
+        when(redisClient.getLastNumber()).thenReturn(Optional.of(2L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(Long.valueOf(1), Long.valueOf(3))))
+                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<CalculateResultDTO>() {});
+        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
         Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
     }
-
 
 }
