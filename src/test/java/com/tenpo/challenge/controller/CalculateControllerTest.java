@@ -9,54 +9,53 @@ import com.tenpo.challenge.external.PercentageClient;
 import com.tenpo.challenge.external.dto.PercentageDTO;
 import com.tenpo.challenge.redis.RedisClient;
 
-
 import com.tenpo.challenge.services.CalculateRequestService;
 import com.tenpo.challenge.services.CalculateService;
 import com.tenpo.challenge.services.PercentageService;
 
-import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@ExtendWith(MockitoExtension.class)
 public class CalculateControllerTest {
-
 
     private CalculateService calculateService;
 
+    @Mock
     private RedisClient redisClient;
 
+    @Mock
     private PercentageClient percentageClient;
 
+    @Mock
     private CalculateRequestService calculateRequestService;
 
     private PercentageService percentageService;
 
-//    @Autowired
+    @Autowired
     protected MockMvc mockMvc;
 
-//    @Autowired
+    @Autowired
     private ObjectMapper objectMapper;
 
 
     @BeforeEach
     public void setUp() {
-//        redisClient = createMock(RedisClient.class);
-//        percentageClient = createMock(PercentageClient.class);
-//        calculateRequestService = createMock(CalculateRequestService.class);
         percentageService = new PercentageService(percentageClient,redisClient);
         calculateService = new CalculateService(calculateRequestService,percentageService);
         CalculateController calculateController = new CalculateController(calculateService);

@@ -24,7 +24,7 @@ public class PercentageService {
      * @return Long
      */
     public Long getPercentage(){
-        return this.getValue().orElse(this.getLastValue());
+        return this.getValue().orElseGet( ()-> this.getLastValue());
     }
 
     /**
@@ -32,7 +32,7 @@ public class PercentageService {
      * @return Long
      */
     private Optional<Long> getValue(){
-        Long value = this.redisClient.getNumber().orElse(this.getValueOfClient());
+        Long value = this.redisClient.getNumber().orElseGet( () -> this.getValueOfClient());
         return Optional.ofNullable(value);
     }
 
