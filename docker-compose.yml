@@ -9,15 +9,17 @@ services:
      - POSTGRES_PASSWORD= chambers
 
   cache:
-    image: "redis"
+    image: redis
+    container_name: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
 
   app:
-    image: chanochambers/tenpo:v5
+    image: chanochambers/tenpo:v11
     ports:
       - "8080:8080"
     depends_on:
@@ -30,7 +32,5 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       TENPO_APP_JWTSECRET: tenpo
       TENPO_APP_JWTEXPIRATIONMS: 300000
-      SPRING_REDIS_HOST: cache
-      SPRING_REDIS_PORT: 6379
       LOG_LEVEL: INFO
       SPRING_JPA_PROPERTIES_JAVAX_PERSISTENCE_VALIDATION_MODE: none

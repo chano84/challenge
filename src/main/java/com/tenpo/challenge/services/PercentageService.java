@@ -3,12 +3,15 @@ package com.tenpo.challenge.services;
 import com.tenpo.challenge.exceptions.BusinessException;
 import com.tenpo.challenge.external.PercentageClient;
 import com.tenpo.challenge.redis.RedisClient;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class PercentageService {
+
+    private static final Logger logger = Logger.getLogger(PercentageService.class);
 
     private final PercentageClient percentageClient;
 
@@ -24,6 +27,7 @@ public class PercentageService {
      * @return Long
      */
     public Long getPercentage(){
+        logger.info("PercentageService.getPercentage()");
         return this.getValue().orElseGet( ()-> this.getLastValue());
     }
 
@@ -32,7 +36,9 @@ public class PercentageService {
      * @return Long
      */
     private Optional<Long> getValue(){
+        logger.info("PercentageService.getValue()");
         Long value = this.redisClient.getNumber().orElseGet( () -> this.getValueOfClient());
+        logger.info("PercentageService.getValue().end");
         return Optional.ofNullable(value);
     }
 
@@ -41,14 +47,16 @@ public class PercentageService {
      * @return get Value of client if doesnt exist return null
      */
     private Long getValueOfClient() {
+        logger.info("PercentageService.getValueOfClient()");
         Long value = null;
         try {
             value = this.percentageClient.getPercentage().getValue();
             this.redisClient.setNumber(value);
             this.redisClient.setLastNumber(value);
+            logger.info("PercentageService.getValueOfClient() end value of client: ".concat(value.toString()));
             return value;
         } catch (BusinessException e) {
-            e.printStackTrace();
+            logger.info("PercentageService.getValueOfClient() No found value");
             return value;
         }
     }
@@ -58,6 +66,7 @@ public class PercentageService {
      * @return Long
      */
     private Long getLastValue(){
+        logger.info("PercentageService.gertLastValue()");
         return this.redisClient.getLastNumber()
                 .orElseThrow( () -> new BusinessException("The Last Value doesn't exist"));
     }
