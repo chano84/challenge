@@ -5,10 +5,10 @@ import javax.validation.constraints.NotNull;
 
 public class CalculateDTO {
 
-    @NotNull(message = "Value not null")
+    @NotNull(message = "ValueA must not null")
     private Long valueA;
 
-    @NotNull(message = "Value not null")
+    @NotNull(message = "ValueB must not null")
     private Long valueB;
 
     public CalculateDTO(){}
@@ -18,12 +18,9 @@ public class CalculateDTO {
         this.valueB = valueB;
     }
 
-
     public Long getValueA() {
         return valueA;
     }
-
-
 
     public void setValueA(
              Long valueA) {
@@ -33,7 +30,6 @@ public class CalculateDTO {
     public Long getValueB() {
         return valueB;
     }
-
 
     public void setValueB(
              Long valueB) {
