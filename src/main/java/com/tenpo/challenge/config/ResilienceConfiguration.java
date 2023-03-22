@@ -54,7 +54,7 @@ public class ResilienceConfiguration {
     public Retry retry(){
         RetryConfig config = RetryConfig.custom()
                 .maxAttempts(3)
-                .waitDuration(Duration.ofMillis(500))
+                .waitDuration(Duration.ofMinutes(1))
                 .build();
         Retry retry = io.github.resilience4j.retry.Retry.of("retry", config);
         return retry;
