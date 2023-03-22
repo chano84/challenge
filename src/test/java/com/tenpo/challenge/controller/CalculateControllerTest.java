@@ -67,14 +67,14 @@ public class CalculateControllerTest {
 
     @Test
     public void calculateWithValueInRedis() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.of(2L));
+        when(redisClient.getNumber()).thenReturn(Optional.of(10L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
+                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(5L, 5L)))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                         .andReturn();
         final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(6));
+        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(11));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class CalculateControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
         final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(12));
+        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(4));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class CalculateControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();
         final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(33));
+        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(4));
     }
 
 }
