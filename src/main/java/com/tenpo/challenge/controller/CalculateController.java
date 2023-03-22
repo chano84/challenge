@@ -4,7 +4,10 @@ import com.tenpo.challenge.controller.dto.CalculateDTO;
 import com.tenpo.challenge.controller.dto.CalculateResultDTO;
 import com.tenpo.challenge.services.CalculateService;
 
-import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+
 
 import org.jboss.logging.Logger;
 import org.springframework.http.HttpStatus;
@@ -25,18 +28,25 @@ public class CalculateController {
 
     private final CalculateService calculateService;
 
-    public CalculateController(CalculateService calculateService) {
+    private final RateLimiterRegistry rateLimiterRegistry;
+
+    public CalculateController(CalculateService calculateService, RateLimiterRegistry rateLimiterRegistry) {
         this.calculateService = calculateService;
+        this.rateLimiterRegistry = rateLimiterRegistry;
     }
 
-
-    @PostMapping(path="/calculate")
-    @RateLimiter(name = "calculate")
+    @PostMapping(path = "/calculate")
     public ResponseEntity<CalculateResultDTO> calculate(@Valid @RequestBody CalculateDTO requestCalculateDTO) {
-         logger.info("CalculateController.calculate() params: ".concat(requestCalculateDTO.toString()));
-         BigDecimal result = this.calculateService.calculate(requestCalculateDTO.getValueA(), requestCalculateDTO.getValueB());
-         return new ResponseEntity<>(new CalculateResultDTO(result),HttpStatus.OK);
-    }
+        RateLimiter rateLimiter = rateLimiterRegistry.rateLimiter("myRateLimiter");
+        if (rateLimiter.acquirePermission()) {
+            logger.info("CalculateController.calculate() params: ".concat(requestCalculateDTO.toString()));
+            BigDecimal result = this.calculateService.calculate(requestCalculateDTO.getValueA(), requestCalculateDTO.getValueB());
+            return new ResponseEntity<>(new CalculateResultDTO(result),HttpStatus.OK);
+        } else {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+        }
 
+
+    }
 
 }

@@ -3,14 +3,13 @@ package com.tenpo.challenge.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tenpo.challenge.controller.dto.CalculateDTO;
-import com.tenpo.challenge.controller.dto.CalculateResultDTO;
 import com.tenpo.challenge.controller.dto.PageDTO;
 import com.tenpo.challenge.external.PercentageClient;
-import com.tenpo.challenge.model.CalculateRequest;
 import com.tenpo.challenge.redis.RedisClient;
 import com.tenpo.challenge.services.CalculateRequestService;
 import com.tenpo.challenge.services.CalculateService;
 import com.tenpo.challenge.services.PercentageService;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -57,11 +55,14 @@ public class CalculateRequestControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private RateLimiterRegistry rateLimiterRegistry;
+
     @BeforeEach
     public void setUp() {
         PercentageService percentageService = new PercentageService(percentageClient,redisClient);
         CalculateService calculateService = new CalculateService(calculateRequestService,percentageService);
-        CalculateController calculateController = new CalculateController(calculateService);
+        CalculateController calculateController = new CalculateController(calculateService, rateLimiterRegistry);
         CalculateRequestController calculateRequestController = new CalculateRequestController(calculateRequestService);
         mockMvc = MockMvcBuilders.standaloneSetup(calculateController).build();
         mockMvcRequest = MockMvcBuilders.standaloneSetup(calculateRequestController).build();

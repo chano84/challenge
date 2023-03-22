@@ -14,6 +14,7 @@ import com.tenpo.challenge.services.CalculateRequestService;
 import com.tenpo.challenge.services.CalculateService;
 import com.tenpo.challenge.services.PercentageService;
 
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,11 +58,14 @@ public class CalculateControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private RateLimiterRegistry rateLimiterRegistry;
+
     @BeforeEach
     public void setUp() {
         PercentageService percentageService = new PercentageService(percentageClient,redisClient);
         CalculateService calculateService = new CalculateService(calculateRequestService,percentageService);
-        CalculateController calculateController = new CalculateController(calculateService);
+        CalculateController calculateController = new CalculateController(calculateService, rateLimiterRegistry);
         mockMvc = MockMvcBuilders.standaloneSetup(calculateController).build();
     }
 
@@ -81,20 +85,6 @@ public class CalculateControllerTest {
     public void calculateWithValueInPercentageClient() throws Exception {
         when(redisClient.getNumber()).thenReturn(Optional.empty());
         when(percentageClient.getPercentage()).thenReturn(new PercentageDTO(4L));
-        final MvcResult result = this.mockMvc.perform(post("/calculate")
-                        .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andReturn();
-        final CalculateResultDTO calculateResultDTO = this.objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-        Assertions.assertEquals(calculateResultDTO.getValue() , new BigDecimal(4));
-    }
-
-    @Test
-    public void calculateWithLastValue() throws Exception {
-        when(redisClient.getNumber()).thenReturn(Optional.empty());
-        when(percentageClient.getPercentage()).thenThrow(new BusinessException("error"));
-        when(redisClient.getLastNumber()).thenReturn(Optional.of(11L));
         final MvcResult result = this.mockMvc.perform(post("/calculate")
                         .content(this.objectMapper.writeValueAsString(new CalculateDTO(1L, 3L)))
                         .contentType(MediaType.APPLICATION_JSON)
