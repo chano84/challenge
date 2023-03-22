@@ -17,19 +17,19 @@ import java.time.Duration;
 public class ResilienceConfiguration {
 
     /**
-     * Límite de 10 solicitudes por segundo
+     * Límite de solicitudes por segundo
      */
     @Value("${resilience.limit_for_period:1}")
     private int limitPorPeriod;
 
     /**
-     * Ventana de tiempo de 1 segundo
+     * Ventana de tiempo por segundo
      */
     @Value("${resilience.limit_refresh_period:1}")
     private int limitRefreshPeriod;
 
     /**
-     *Timeout máximo de 100 ms para adquirir un permiso
+     *Timeout máximo para adquirir un request
      */
     @Value("${resilience.limit_duration:100}")
     private int timeoutDuration;
