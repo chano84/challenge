@@ -19,7 +19,7 @@ services:
       - "6379:6379"
 
   app:
-    image: chanochambers/tenpo:v11
+    image: chanochambers/tenpo:v0
     ports:
       - "8080:8080"
     depends_on:
