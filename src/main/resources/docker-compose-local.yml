@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+  db:
+    image: 'postgres:13.1-alpine'
+    environment:
+      POSTGRES_DB: 'mydb'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'chambers'
+
+  cache:
+    image: "redis"
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+
+  app:
+    image: chanochambers/tenpo:v5
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - cache
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://db:5432/mydb'
+      SPRING_DATASOURCE_USERNAME: compose-postgres
+      SPRING_DATASOURCE_PASSWORD: compose-postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      TENPO_APP_JWTSECRET: tenpo
+      TENPO_APP_JWTEXPIRATIONMS: 300000
+      SPRING_REDIS_HOST: cache
+      SPRING_REDIS_PORT: 6379
+      LOG_LEVEL: INFO
+      SPRING_JPA_PROPERTIES_JAVAX_PERSISTENCE_VALIDATION_MODE: none
