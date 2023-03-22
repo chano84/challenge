@@ -23,7 +23,7 @@ public class PercentageService {
     }
 
     /**
-     * Si esta en redis, retorno redis sino voy al servicio, si el servicio faya retorno el ultimo valor utilizable
+     * Si esta en redis, retorno redis sino voy al servicio, si el servicio da error retorno el ultimo valor utilizable
      * @return Long
      */
     public Long getPercentage(){
@@ -44,7 +44,7 @@ public class PercentageService {
 
     /**
      *
-     * @return get Value of client if doesnt exist return null
+     * @return get Value of client if doesn't exist return null
      */
     private Long getValueOfClient() {
         logger.info("PercentageService.getValueOfClient()");

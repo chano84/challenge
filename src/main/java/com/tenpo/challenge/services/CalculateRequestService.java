@@ -21,6 +21,13 @@ public class CalculateRequestService {
         this.calculateRequestRepository = calculateRequestRepository;
     }
 
+    /**
+     * Create {@link CalculateRequest}
+     * @param valueA
+     * @param valueB
+     * @param result
+     * @return
+     */
     @Async
     public CalculateRequest create(Long valueA, Long valueB, Long result){
         CalculateRequest calculateRequest = new CalculateRequest(valueA,valueB,result, LocalDateTime.now());
@@ -29,7 +36,7 @@ public class CalculateRequestService {
      }
 
     /**
-     * Realizar las consultas paginadas
+     * Get all {@link CalculateRequest} paginated
      * @return
      */
     public Page<CalculateRequest> findAll(Pageable pageable){

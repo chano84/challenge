@@ -22,10 +22,18 @@ public class CalculateService {
     public BigDecimal calculate(Long valueA, Long valueB ){
         logger.info("CalculateService.calculate()");
         Long percentage = this.percentageService.getPercentage();
-        Long result = valueA * valueB * percentage;
+        Long result = this.calculate(valueA, valueB, percentage);
         this.calculateRequestService.create(valueA,valueB,result);
         logger.info("CalculateService.calculate().end ".concat(result.toString()));
         return BigDecimal.valueOf(result);
+    }
+
+
+    private Long calculate(Long valueA, Long valueB, Long percentage){
+        Long partialResult = valueA + valueB ;
+        Long percentageResult = (partialResult * percentage) / 100;
+        Long result = partialResult + percentageResult;
+        return result;
     }
 
 }

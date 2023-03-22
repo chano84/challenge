@@ -12,7 +12,7 @@ public class RedisClient {
 
     private final RedisTemplate<String,Long> redisTemplate;
 
-    private static final String LAST_NUMBER_KEY = "rop";
+    private static final String LAST_NUMBER_KEY = "last_number";
 
     private static final String NUMBER_KEY = "number";
 
@@ -21,7 +21,7 @@ public class RedisClient {
 
     public RedisClient(RedisTemplate<String, Long> redisTemplate, @Value("${spring.data.redis.key.ttl}") Long ttl) {
         this.redisTemplate = redisTemplate;
-        this.duration = Duration.ofSeconds(ttl);
+        this.duration = Duration.ofMinutes(ttl);
     }
 
     public void setNumber(Long value){
