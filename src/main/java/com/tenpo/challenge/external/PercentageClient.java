@@ -34,7 +34,7 @@ public class PercentageClient {
                 .retrieve()
                 .bodyToMono(PercentageDTO.class)
                 .onErrorResume(Mono::error)
-                .retryWhen(Retry.fixedDelay(3, Duration.of(1, ChronoUnit.SECONDS))
+                .retryWhen(Retry.fixedDelay(3, Duration.of(30, ChronoUnit.MILLIS))
                         .onRetryExhaustedThrow((retryBackoffSpec, retrySignal) ->
                                 new BusinessException("Service Percentage not found")))
                 .block();
