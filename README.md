@@ -33,7 +33,7 @@ Para ejecutar la aplicación se debe descargar la docker-compose image
 ```
 docker pull chanochambers/tenpo:v0
 ```
-y luego en un directorio que contenga el docker-compose.yml ejecutar
+y luego en un directorio raiz de proyecto que contiene el docker-compose.yml ejecutar
 
  ```
   docker-compose up 
