@@ -12,14 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/calculate")
 @Validated
 public class CalculateController {
 
@@ -31,11 +29,12 @@ public class CalculateController {
         this.calculateService = calculateService;
     }
 
-    @PostMapping
+
+    @PostMapping(path="/calculate")
     @RateLimiter(name = "calculate")
     public ResponseEntity<CalculateResultDTO> calculate(@Valid @RequestBody CalculateDTO requestCalculateDTO) {
          logger.info("CalculateController.calculate() params: ".concat(requestCalculateDTO.toString()));
-         BigDecimal result = this.calculateService.calculate(requestCalculateDTO.valueA(), requestCalculateDTO.valueB());
+         BigDecimal result = this.calculateService.calculate(requestCalculateDTO.getValueA(), requestCalculateDTO.getValueB());
          return new ResponseEntity<>(new CalculateResultDTO(result),HttpStatus.OK);
     }
 
